@@ -1,4 +1,4 @@
-# D&D Npc Generator
+# Npc Generator
 NPC Generator is a Java application designed to help Dungeon Masters generate unique non-player characters for classic 5E D&D campaigns. 
 
 **Status**: 🚧 Under Development

@@ -34,4 +34,8 @@ public class FirstName {
                 ", firstName='" + firstName + '\'' +
                 '}';
     }
+
+    public Integer getId() {
+        return id;
+    }
 }

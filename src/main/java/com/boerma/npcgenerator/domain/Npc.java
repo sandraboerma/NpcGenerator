@@ -47,6 +47,70 @@ public class Npc {
         this.gender = new GenderConverter().convertToEntityAttribute(genderId);
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getFirstNameId() {
+        return firstNameId;
+    }
+
+    public void setFirstNameId(int firstNameId) {
+        this.firstNameId = firstNameId;
+    }
+
+    public int getLastNameId() {
+        return lastNameId;
+    }
+
+    public void setLastNameId(int lastNameId) {
+        this.lastNameId = lastNameId;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public int getRaceId() {
+        return raceId;
+    }
+
+    public void setRaceId(int raceId) {
+        this.raceId = raceId;
+    }
+
+    public int getSocialStatusId() {
+        return socialStatusId;
+    }
+
+    public void setSocialStatusId(int socialStatusId) {
+        this.socialStatusId = socialStatusId;
+    }
+
+    public int getProfessionId() {
+        return professionId;
+    }
+
+    public void setProfessionId(int professionId) {
+        this.professionId = professionId;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
     @Override
     public String toString() {
         return "Npc {" +

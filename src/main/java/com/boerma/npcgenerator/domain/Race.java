@@ -34,4 +34,12 @@ public class Race {
                 ", raceName='" + raceName + '\'' +
                 '}';
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getRaceName() {
+        return raceName;
+    }
 }

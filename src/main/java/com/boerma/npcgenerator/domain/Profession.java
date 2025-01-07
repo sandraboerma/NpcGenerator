@@ -39,4 +39,8 @@ public class Profession {
                 ", socialStatusId=" + socialStatusId +
                 '}';
     }
+
+    public Integer getId() {
+        return id;
+    }
 }

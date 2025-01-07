@@ -34,4 +34,8 @@ public class Language {
                 ", lastName='" + languageName + '\'' +
                 '}';
     }
+
+    public Integer getId() {
+        return id;
+    }
 }

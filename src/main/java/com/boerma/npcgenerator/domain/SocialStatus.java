@@ -34,4 +34,9 @@ public class SocialStatus {
                 ", socialStatus='" + statusName + '\'' +
                 '}';
     }
+
+    public Integer getId() {
+        return id;
+    }
+
 }

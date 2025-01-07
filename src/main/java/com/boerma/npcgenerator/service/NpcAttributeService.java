@@ -51,16 +51,19 @@ public class NpcAttributeService {
     }
 
     public synchronized void loadData() {
-        attributes.put("firstNames", firstNameRepository.findAll());
-        attributes.put("lastNames", lastNameRepository.findAll());
-        attributes.put("races", raceRepository.findAll());
-        attributes.put("professions", professionRepository.findAll());
-        attributes.put("socialStatuses", socialStatusRepository.findAll());
-        attributes.put("raceLanguages", raceLanguageRepository.findAll());
-        attributes.put("languages", languageRepository.findAll());
+        if (attributes.isEmpty()) {
+            attributes.put("firstNames", firstNameRepository.findAll());
+            attributes.put("lastNames", lastNameRepository.findAll());
+            attributes.put("races", raceRepository.findAll());
+            attributes.put("professions", professionRepository.findAll());
+            attributes.put("socialStatuses", socialStatusRepository.findAll());
+            attributes.put("raceLanguages", raceLanguageRepository.findAll());
+            attributes.put("languages", languageRepository.findAll());
 
-        attributes.forEach((key, value) -> ValidationUtility.validateNotEmpty(key, (List<?>) value));
+            attributes.forEach((key, value) -> ValidationUtility.validateNotEmpty(key, (List<?>) value));
+        }
     }
+
 
     @SuppressWarnings("unchecked")
     private <T> T getRandomAttribute(String key) {

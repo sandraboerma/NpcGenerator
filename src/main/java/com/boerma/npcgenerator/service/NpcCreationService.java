@@ -21,8 +21,8 @@ public class NpcCreationService {
     }
 
     public Npc generateAndSaveNpc() {
-        FirstName firstname = npcAttributeService.getRandomFirstName();
-        LastName lastname = npcAttributeService.getRandomLastName();
+        FirstName firstName = npcAttributeService.getRandomFirstName();
+        LastName lastName = npcAttributeService.getRandomLastName();
         Race race = npcAttributeService.getRandomRace();
         Profession profession = npcAttributeService.getRandomProfession();
         SocialStatus socialStatus = npcAttributeService.getRandomSocialStatus();
@@ -30,8 +30,8 @@ public class NpcCreationService {
         int age = npcAttributeService.generateRandomAge(race);
 
         Npc npc = NpcFacade.createNpc(
-                firstname.getId(),
-                lastname.getId(),
+                firstName.getId(),
+                lastName.getId(),
                 race.getId(),
                 profession.getId(),
                 socialStatus.getId(),
@@ -43,6 +43,8 @@ public class NpcCreationService {
 
     public List<Npc> generateAndSaveNpcs(int count) {
         ValidationUtility.validateIntRange("NPC count: ", count, 1, 10);
+
+        npcAttributeService.loadData();
 
         List<Npc> npcs = new ArrayList<>();
         for (int i = 0; i < count; i++) {

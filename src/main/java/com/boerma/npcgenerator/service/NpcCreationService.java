@@ -1,6 +1,7 @@
 package com.boerma.npcgenerator.service;
 
 import com.boerma.npcgenerator.domain.*;
+import com.boerma.npcgenerator.dto.NpcDisplayDto;
 import com.boerma.npcgenerator.repository.NpcRepository;
 import com.boerma.npcgenerator.utility.ValidationUtility;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class NpcCreationService {
         this.npcAttributeService = npcAttributeService;
     }
 
-    public Npc generateAndSaveNpc() {
+    public Npc createAndSaveNpc() {
         FirstName firstName = npcAttributeService.getRandomFirstName();
         LastName lastName = npcAttributeService.getRandomLastName();
         Race race = npcAttributeService.getRandomRace();
@@ -38,25 +39,31 @@ public class NpcCreationService {
                 gender,
                 age
         );
-        return npcRepository.save(npc);
+        Npc savedNpc = npcRepository.save(npc);
+        System.out.println("Saved NPC ID: " + savedNpc.getId());
+        return savedNpc;
     }
 
-    public List<Npc> generateAndSaveNpcs(int count) {
-        ValidationUtility.validateIntRange("NPC count: ", count, 1, 10);
+    public List<NpcDisplayDto> createAndSaveNpcs(int count) {
 
-        npcAttributeService.loadData();
+        ValidationUtility.validateIntRange("NPC count", count, 1, 10);
 
-        List<Npc> npcs = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            npcs.add(generateAndSaveNpc());
+        if (!npcAttributeService.isDataLoaded()) {
+            npcAttributeService.loadData();
         }
 
-        return npcs;
+        List<Integer> newNpcIds = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            Npc npc = createAndSaveNpc();
+            newNpcIds.add(npc.getId());
+        }
+
+        System.out.println("Generated NPC IDs: " + newNpcIds);
+        return npcRepository.findAllNpcDetails(newNpcIds);
     }
 
-    public void generateAndDisplayNpcs(int count) {
-        List<Npc> generatedNpcs = generateAndSaveNpcs(count);
-        System.out.println("Generated NPCs:");
-        generatedNpcs.forEach(System.out::println);
+    public List<NpcDisplayDto> viewAllNpcs() {
+        return npcRepository.findAllNpcDetails();
     }
+
 }

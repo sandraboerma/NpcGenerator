@@ -23,13 +23,7 @@ public class NpcAttributeService {
     private final RaceLanguageRepository raceLanguageRepository;
     private final LanguageRepository languageRepository;
 
-    private List<FirstName> firstNames;
-    private List<LastName> lastNames;
-    private List<Race> races;
-    private List<Profession> professions;
-    private List<SocialStatus> socialStatuses;
-    private List<RaceLanguage> raceLanguages;
-    private List<Language> languages;
+    private boolean dataLoaded = false;
 
     @Autowired
     public NpcAttributeService(
@@ -61,9 +55,13 @@ public class NpcAttributeService {
             attributes.put("languages", languageRepository.findAll());
 
             attributes.forEach((key, value) -> ValidationUtility.validateNotEmpty(key, (List<?>) value));
+            dataLoaded = true;
         }
     }
 
+    public boolean isDataLoaded() {
+        return dataLoaded;
+    }
 
     @SuppressWarnings("unchecked")
     private <T> T getRandomAttribute(String key) {

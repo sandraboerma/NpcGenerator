@@ -4,6 +4,7 @@ import com.boerma.npcgenerator.dto.NpcDisplayDto;
 import com.boerma.npcgenerator.repository.NpcRepository;
 import com.boerma.npcgenerator.service.NpcCreationService;
 import com.boerma.npcgenerator.utility.InputUtility;
+import com.boerma.npcgenerator.utility.NpcDisplayUtility;
 import com.boerma.npcgenerator.utility.ValidationUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,48 +32,46 @@ public class NpcGeneratorCli {
                 System.out.println("3. Exit");
                 int choice = InputUtility.getInt("Enter your choice: ");
 
-                if (choice == 3) {
-                    System.out.println("Exiting... Goodbye!");
-                    break;
-                } else if (choice == 1) {
-                    int count = InputUtility.getInt("Enter the number of NPCs to generate (1–10): ");
-                    ValidationUtility.validateIntRange("NPC Count", count, 1, 10);
-                    npcCreationService.generateAndDisplayNpcs(count);
-                } else if (choice == 2) {
-                    displayAllNpcs();
-                } else {
-                    System.out.println("Invalid choice. Please try again.");
+                switch (choice) {
+                    case 1 -> handleGenerateNpcs();
+                    case 2 -> handleViewAllNpcs();
+                    case 3 -> {
+                        System.out.println("Exiting... Goodbye!");
+                        return;
+                    }
+                    default -> System.out.println("Invalid choice. Please try again.");
                 }
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
             }
         }
-        InputUtility.closeScanner();
     }
 
-    public void displayAllNpcs() {
-        List<NpcDisplayDto> npcDetails = npcRepository.findAllNpcDetails();
+    private void handleGenerateNpcs() {
+        try {
+            int count = InputUtility.getInt("Enter the number of NPCs to generate (1–10): ");
+            ValidationUtility.validateIntRange("NPC Count", count, 1, 10);
 
-        System.out.println("+----+---------------+---------------+-----+--------------+-----------------------+---------------+--------+");
-        System.out.println("| ID | First Name    | Last Name     | Age | Race         | Profession            | Social Stat   | Gender |");
-        System.out.println("+----+---------------+---------------+-----+--------------+-----------------------+---------------+--------+");
-
-        for (NpcDisplayDto npc : npcDetails) {
-            System.out.printf(
-                    "| %2d | %-13s | %-13s | %3d | %-12s | %-21s | %-13s | %-6s |\n",
-                    npc.getId(),
-                    npc.getFirstName(),
-                    npc.getLastName(),
-                    npc.getAge(),
-                    npc.getRace(),
-                    npc.getProfession(),
-                    npc.getSocialStatus(),
-                    npc.getGender()
-            );
+            List<NpcDisplayDto> newNpcs = npcCreationService.createAndSaveNpcs(count);
+            NpcDisplayUtility.displayNpcs(newNpcs);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error during NPC generation: " + e.getMessage());
         }
+    }
 
-        System.out.println("+----+---------------+---------------+-----+--------------+-----------------------+---------------+--------+");
-
+    private void handleViewAllNpcs() {
+        try {
+            List<NpcDisplayDto> allNpcs = npcCreationService.viewAllNpcs();
+            if (allNpcs.isEmpty()) {
+                System.out.println("No NPCs found.");
+            } else {
+                NpcDisplayUtility.displayNpcTable(allNpcs);
+            }
+        } catch (Exception e) {
+            System.out.println("Error fetching NPCs: " + e.getMessage());
+        }
     }
 
 }

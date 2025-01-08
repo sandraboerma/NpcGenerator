@@ -8,7 +8,7 @@ public class NpcFacade {
             int raceId,
             int professionId,
             int socialStatusId,
-            Gender gender,
+            int genderId,
             int age
     ) {
         Npc npc = new Npc();
@@ -17,7 +17,7 @@ public class NpcFacade {
         npc.setRaceId(raceId);
         npc.setProfessionId(professionId);
         npc.setSocialStatusId(socialStatusId);
-        npc.setGender(gender);
+        npc.setGender(genderId);
         npc.setAge(age);
         return npc;
     }

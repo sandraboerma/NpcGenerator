@@ -10,9 +10,10 @@ public class NpcDisplayDto {
     private String race;
     private String profession;
     private String socialStatus;
-    private Gender gender;
+    private String gender;
 
-    public NpcDisplayDto(int id, String firstName, String lastName, int age, String race, String profession, String socialStatus, Gender gender) {
+    public NpcDisplayDto(int id, String firstName, String lastName, int age, String race,
+                         String profession, String socialStatus, String gender) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -51,7 +52,7 @@ public class NpcDisplayDto {
         return socialStatus;
     }
 
-    public Gender getGender() {
+    public String getGender() {
         return gender;
     }
 

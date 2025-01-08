@@ -1,7 +1,5 @@
 package com.boerma.npcgenerator.utility;
 
-import com.boerma.npcgenerator.domain.Gender;
-
 import java.util.List;
 import java.util.Random;
 
@@ -20,10 +18,6 @@ public class RandomizationUtility {
         }
         Random random = new Random();
         return random.nextInt(max - min + 1) + min;
-    }
-
-    public static Gender getRandomGender() {
-        return getRandomElement(List.of(Gender.values()));
     }
 
 }

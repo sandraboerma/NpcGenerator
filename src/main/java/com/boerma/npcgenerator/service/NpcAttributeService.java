@@ -22,6 +22,7 @@ public class NpcAttributeService {
     private final SocialStatusRepository socialStatusRepository;
     private final RaceLanguageRepository raceLanguageRepository;
     private final LanguageRepository languageRepository;
+    private final GenderRepository genderRepository;
 
     private boolean dataLoaded = false;
 
@@ -33,7 +34,8 @@ public class NpcAttributeService {
             ProfessionRepository professionRepository,
             SocialStatusRepository socialStatusRepository,
             RaceLanguageRepository raceLanguageRepository,
-            LanguageRepository languageRepository
+            LanguageRepository languageRepository,
+            GenderRepository genderRepository
     ) {
         this.firstNameRepository = firstNameRepository;
         this.lastNameRepository = lastNameRepository;
@@ -42,6 +44,7 @@ public class NpcAttributeService {
         this.socialStatusRepository = socialStatusRepository;
         this.raceLanguageRepository = raceLanguageRepository;
         this.languageRepository = languageRepository;
+        this.genderRepository = genderRepository;
     }
 
     public synchronized void loadData() {
@@ -53,6 +56,7 @@ public class NpcAttributeService {
             attributes.put("socialStatuses", socialStatusRepository.findAll());
             attributes.put("raceLanguages", raceLanguageRepository.findAll());
             attributes.put("languages", languageRepository.findAll());
+            attributes.put("genders", genderRepository.findAll());
 
             attributes.forEach((key, value) -> ValidationUtility.validateNotEmpty(key, (List<?>) value));
             dataLoaded = true;
@@ -93,6 +97,10 @@ public class NpcAttributeService {
         return getRandomAttribute("languages");
     }
 
+    public Gender getRandomGender() {
+        return getRandomAttribute("genders");
+    }
+
     public int generateRandomAge(Race race) {
         int[] range = new int[]{18, 75};
         switch (race.getRaceName().toLowerCase()) {
@@ -106,10 +114,6 @@ public class NpcAttributeService {
             case "human" -> range = new int[]{18, 75};
         }
         return RandomizationUtility.getRandomInt(range[0], range[1]);
-    }
-
-    public Gender getRandomGender() {
-        return RandomizationUtility.getRandomGender();
     }
 
 }

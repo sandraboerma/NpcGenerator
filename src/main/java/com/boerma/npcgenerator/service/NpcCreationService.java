@@ -36,7 +36,7 @@ public class NpcCreationService {
                 race.getId(),
                 profession.getId(),
                 socialStatus.getId(),
-                gender,
+                gender.getId(),
                 age
         );
         Npc savedNpc = npcRepository.save(npc);

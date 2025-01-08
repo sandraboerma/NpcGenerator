@@ -30,8 +30,7 @@ public class Npc {
     private int professionId;
 
     @Column(name = "gender_id")
-    @Convert(converter = GenderConverter.class)
-    private Gender gender;
+    private int genderId;
 
     public Npc() {
     }
@@ -44,7 +43,7 @@ public class Npc {
         this.raceId = raceId;
         this.socialStatusId = socialStatusId;
         this.professionId = professionId;
-        this.gender = new GenderConverter().convertToEntityAttribute(genderId);
+        this.genderId = genderId;
     }
 
     public int getId() {
@@ -103,12 +102,12 @@ public class Npc {
         this.professionId = professionId;
     }
 
-    public Gender getGender() {
-        return gender;
+    public int getGenderId() {
+        return genderId;
     }
 
-    public void setGender(Gender gender) {
-        this.gender = gender;
+    public void setGender(int genderId) {
+        this.genderId = genderId;
     }
 
     @Override
@@ -121,7 +120,7 @@ public class Npc {
                 ", raceId=" + raceId +
                 ", socialStatusId=" + socialStatusId +
                 ", professionId=" + professionId +
-                ", gender=" + gender +
+                ", gender=" + genderId +
                 '}';
     }
 }

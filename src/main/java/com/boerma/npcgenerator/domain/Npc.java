@@ -2,6 +2,9 @@ package com.boerma.npcgenerator.domain;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "npcs")
 public class Npc {
@@ -32,10 +35,19 @@ public class Npc {
     @Column(name = "gender_id")
     private int genderId;
 
+    @ManyToMany
+    @JoinTable(
+            name = "npc_languages",
+            joinColumns = @JoinColumn(name = "npc_id"),
+            inverseJoinColumns = @JoinColumn(name = "language_id")
+    )
+    private Set<Language> languages = new HashSet<>();
+
     public Npc() {
     }
 
-    public Npc(int id, int firstNameId, int lastNameId, int age, int raceId, int socialStatusId, int professionId, int genderId) {
+    public Npc(int id, int firstNameId, int lastNameId, int age, int raceId, int socialStatusId,
+               int professionId, int genderId, Set<Language> languages) {
         this.id = id;
         this.firstNameId = firstNameId;
         this.lastNameId = lastNameId;
@@ -44,6 +56,7 @@ public class Npc {
         this.socialStatusId = socialStatusId;
         this.professionId = professionId;
         this.genderId = genderId;
+        this.languages = languages != null ? languages : new HashSet<>();
     }
 
     public int getId() {
@@ -110,6 +123,14 @@ public class Npc {
         this.genderId = genderId;
     }
 
+    public Set<Language> getLanguages() {
+        return languages;
+    }
+
+    public void setLanguages(Set<Language> languages) {
+        this.languages = languages;
+    }
+
     @Override
     public String toString() {
         return "Npc {" +
@@ -121,6 +142,10 @@ public class Npc {
                 ", socialStatusId=" + socialStatusId +
                 ", professionId=" + professionId +
                 ", gender=" + genderId +
+                ", languages=" + languages.stream()
+                .map(Language::getLanguageName)
+                .toList() +
                 '}';
     }
+
 }

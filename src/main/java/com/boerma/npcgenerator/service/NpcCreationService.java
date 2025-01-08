@@ -14,11 +14,15 @@ import java.util.List;
 public class NpcCreationService {
     private final NpcRepository npcRepository;
     private final NpcAttributeService npcAttributeService;
+    private final LanguageAssignmentService languageAssignmentService;
 
     @Autowired
-    public NpcCreationService(NpcRepository npcRepository, NpcAttributeService npcAttributeService) {
+    public NpcCreationService(NpcRepository npcRepository,
+                              NpcAttributeService npcAttributeService,
+                              LanguageAssignmentService languageAssignmentService) {
         this.npcRepository = npcRepository;
         this.npcAttributeService = npcAttributeService;
+        this.languageAssignmentService = languageAssignmentService;
     }
 
     public Npc createAndSaveNpc() {
@@ -40,7 +44,9 @@ public class NpcCreationService {
                 age
         );
         Npc savedNpc = npcRepository.save(npc);
+        languageAssignmentService.assignLanguagesToNpc(savedNpc, race, socialStatus);
         System.out.println("Saved NPC ID: " + savedNpc.getId());
+        npcRepository.save(savedNpc);
         return savedNpc;
     }
 
@@ -59,11 +65,42 @@ public class NpcCreationService {
         }
 
         System.out.println("Generated NPC IDs: " + newNpcIds);
-        return npcRepository.findAllNpcDetails(newNpcIds);
+        return mapResultsToDto(npcRepository.findAllNpcDetails(newNpcIds));
     }
 
     public List<NpcDisplayDto> viewAllNpcs() {
-        return npcRepository.findAllNpcDetails();
+        return mapResultsToDto(npcRepository.findAllNpcDetails());
+    }
+
+    private List<NpcDisplayDto> mapResultsToDto(List<Object[]> results) {
+        if (results.isEmpty()) {
+            System.out.println("No results found.");
+        } else {
+            for (Object[] row : results) {
+                System.out.println("Raw result: " + java.util.Arrays.toString(row));
+            }
+        }
+
+        List<NpcDisplayDto> npcDetails = new ArrayList<>();
+        for (Object[] row : results) {
+            int id = ((Number) row[0]).intValue();
+            String firstName = (String) row[1];
+            String lastName = (String) row[2];
+            int age = ((Number) row[3]).intValue();
+            String race = (String) row[4];
+            String profession = (String) row[5];
+            String socialStatus = (String) row[6];
+            String gender = (String) row[7];
+            String concatenatedLanguages = (String) row[8];
+
+            // Split and populate languages or set an empty list if null
+            List<String> languages = (concatenatedLanguages != null && !concatenatedLanguages.isBlank())
+                    ? List.of(concatenatedLanguages.split(",\\s*"))
+                    : List.of();
+
+            npcDetails.add(new NpcDisplayDto(id, firstName, lastName, age, race, profession, socialStatus, gender, languages));
+        }
+        return npcDetails;
     }
 
 }

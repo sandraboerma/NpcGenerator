@@ -1,6 +1,6 @@
 package com.boerma.npcgenerator.dto;
 
-import com.boerma.npcgenerator.domain.Gender;
+import java.util.List;
 
 public class NpcDisplayDto {
     private int id;
@@ -11,18 +11,22 @@ public class NpcDisplayDto {
     private String profession;
     private String socialStatus;
     private String gender;
+    private List<String> languages;
 
-    public NpcDisplayDto(int id, String firstName, String lastName, int age, String race,
-                         String profession, String socialStatus, String gender) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.age = age;
-        this.race = race;
-        this.profession = profession;
-        this.socialStatus = socialStatus;
-        this.gender = gender;
-    }
+public NpcDisplayDto(int id, String firstName, String lastName, int age, String race,
+                     String profession, String socialStatus, String gender, List<String> languages) {
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.age = age;
+    this.race = race;
+    this.profession = profession;
+    this.socialStatus = socialStatus;
+    this.gender = gender;
+    this.languages = languages != null && !languages.isEmpty()
+            ? languages
+            : List.of();
+}
 
     public int getId() {
         return id;
@@ -56,6 +60,10 @@ public class NpcDisplayDto {
         return gender;
     }
 
+    public List<String> getLanguages() {
+        return languages;
+    }
+
     @Override
     public String toString() {
         return "NpcDisplayDto{" +
@@ -66,7 +74,8 @@ public class NpcDisplayDto {
                 ", race='" + race + '\'' +
                 ", profession='" + profession + '\'' +
                 ", socialStatus='" + socialStatus + '\'' +
-                ", gender=" + gender +
+                ", gender='" + gender + '\'' +
+                ", languages=" + languages +
                 '}';
     }
 }

@@ -1,5 +1,7 @@
 package com.boerma.npcgenerator.cli;
 
+import com.boerma.npcgenerator.domain.Npc;
+import com.boerma.npcgenerator.domain.Profession;
 import com.boerma.npcgenerator.dto.NpcDisplayDto;
 import com.boerma.npcgenerator.repository.NpcRepository;
 import com.boerma.npcgenerator.service.NpcCreationService;
@@ -83,7 +85,23 @@ public class NpcGeneratorCli {
 
     private void handleModifyNpcAttributes() {
         try {
+
+            System.out.println("Here are the available NPCs:");
+            List<NpcDisplayDto> allNpcs = npcCreationService.viewAllNpcs();
+            if (allNpcs.isEmpty()) {
+                System.out.println("No NPCs available for modification.");
+                return;
+            }
+            NpcDisplayUtility.displayNpcTable(allNpcs);
+
             int npcId = InputUtility.getInt("Enter the NPC ID to modify: ");
+
+            Npc npc = npcModificationService.getNpcById(npcId);
+            if (npc == null) {
+                System.out.println("Invalid input: NPC with ID " + npcId + " does not exist. Please enter a valid ID.");
+                return;
+            }
+
             System.out.println("Options for modification:");
             System.out.println("1. Update Social Status");
             System.out.println("2. Update Profession");
@@ -94,16 +112,37 @@ public class NpcGeneratorCli {
 
             if (modificationChoice == 1 || modificationChoice == 3) {
                 System.out.println("Available Social Status IDs:");
-                npcModificationService.getAllSocialStatuses().forEach(status ->
+                npcModificationService.getAllSocialStatusesOrdered().forEach(status ->
                         System.out.println(status.getId() + ": " + status.getStatusName()));
                 newSocialStatusId = InputUtility.getInt("Enter new Social Status ID: ");
             }
 
             if (modificationChoice == 2 || modificationChoice == 3) {
                 System.out.println("Available Profession IDs:");
-                npcModificationService.getAllProfessions().forEach(profession ->
+
+                // Fetch valid professions using a unified method
+                List<Profession> validProfessions = npcModificationService.getFilteredProfessions(npc.getSocialStatusId());
+                if (validProfessions.isEmpty()) {
+                    System.out.println("No valid professions available for the selected Social Status.");
+                    return;
+                }
+
+                // Display valid professions
+                validProfessions.forEach(profession ->
                         System.out.println(profession.getId() + ": " + profession.getProfessionName()));
+
+                List<Integer> validProfessionIds = validProfessions.stream()
+                        .map(Profession::getId)
+                        .toList();
+
+                // Prompt user for new Profession ID
                 newProfessionId = InputUtility.getInt("Enter new Profession ID: ");
+
+                // Validate user input
+                if (!validProfessionIds.contains(newProfessionId)) {
+                    System.out.println("Invalid input: The selected Profession ID is not valid for the current Social Status.");
+                    return;
+                }
             }
 
             String result = npcModificationService.updateNpcAttributes(npcId, newSocialStatusId, newProfessionId);
@@ -114,6 +153,9 @@ public class NpcGeneratorCli {
             System.out.println("Error during NPC modification: " + e.getMessage());
         }
     }
+
+
+
 
 
 

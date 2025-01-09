@@ -7,9 +7,11 @@ import com.boerma.npcgenerator.repository.NpcRepository;
 import com.boerma.npcgenerator.repository.ProfessionRepository;
 import com.boerma.npcgenerator.repository.SocialStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class NpcModificationService {
@@ -22,6 +24,24 @@ public class NpcModificationService {
 
     @Autowired
     private ProfessionRepository professionRepository;
+
+    public Npc getNpcById(int npcId) {
+        return npcRepository.findById(npcId).orElse(null);
+    }
+
+    public List<Profession> getProfessionsBySocialStatus(int socialStatusId) {
+        return professionRepository.findAll().stream()
+                .filter(profession -> profession.getSocialStatusId() == socialStatusId)
+                .collect(Collectors.toList());
+    }
+
+    public List<SocialStatus> getAllSocialStatusesOrdered() {
+        return socialStatusRepository.findAll(Sort.by(Sort.Order.asc("id")));
+    }
+
+    public List<Profession> getFilteredProfessions(int socialStatusId) {
+        throw new UnsupportedOperationException("Method not implemented yet.");
+    }
 
     public List<SocialStatus> getAllSocialStatuses() {
         return socialStatusRepository.findAll();

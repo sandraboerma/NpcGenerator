@@ -31,6 +31,18 @@ public class Profession {
         this.socialStatusId = socialStatusId;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public String getProfessionName() {
+        return professionName;
+    }
+
+    public Integer getSocialStatusId() {
+        return socialStatusId;
+    }
+
     @Override
     public String toString() {
         return "Profession{" +
@@ -38,9 +50,5 @@ public class Profession {
                 ", professionName='" + professionName + '\'' +
                 ", socialStatusId=" + socialStatusId +
                 '}';
-    }
-
-    public Integer getId() {
-        return id;
     }
 }

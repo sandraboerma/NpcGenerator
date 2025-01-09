@@ -3,6 +3,7 @@ package com.boerma.npcgenerator.cli;
 import com.boerma.npcgenerator.dto.NpcDisplayDto;
 import com.boerma.npcgenerator.repository.NpcRepository;
 import com.boerma.npcgenerator.service.NpcCreationService;
+import com.boerma.npcgenerator.service.NpcModificationService;
 import com.boerma.npcgenerator.utility.InputUtility;
 import com.boerma.npcgenerator.utility.NpcDisplayUtility;
 import com.boerma.npcgenerator.utility.ValidationUtility;
@@ -13,13 +14,17 @@ import java.util.List;
 
 @Component
 public class NpcGeneratorCli {
-    private final NpcCreationService npcCreationService;
     private final NpcRepository npcRepository;
+    private final NpcCreationService npcCreationService;
+    private final NpcModificationService npcModificationService;
 
     @Autowired
-    public NpcGeneratorCli(NpcCreationService npcCreationService, NpcRepository npcRepository) {
-        this.npcCreationService = npcCreationService;
+    public NpcGeneratorCli(NpcRepository npcRepository,
+                           NpcCreationService npcCreationService,
+                           NpcModificationService npcModificationService) {
         this.npcRepository = npcRepository;
+        this.npcCreationService = npcCreationService;
+        this.npcModificationService = npcModificationService;
     }
 
     public void start() {
@@ -29,13 +34,15 @@ public class NpcGeneratorCli {
                 System.out.println("\nOptions:");
                 System.out.println("1. Generate NPCs");
                 System.out.println("2. View All NPCs");
-                System.out.println("3. Exit");
+                System.out.println("3. Modify NPC Attributes");
+                System.out.println("4. Exit");
                 int choice = InputUtility.getInt("Enter your choice: ");
 
                 switch (choice) {
                     case 1 -> handleGenerateNpcs();
                     case 2 -> handleViewAllNpcs();
-                    case 3 -> {
+                    case 3 -> handleModifyNpcAttributes();
+                    case 4 -> {
                         System.out.println("Exiting... Goodbye!");
                         return;
                     }
@@ -73,5 +80,41 @@ public class NpcGeneratorCli {
             System.out.println("Error fetching NPCs: " + e.getMessage());
         }
     }
+
+    private void handleModifyNpcAttributes() {
+        try {
+            int npcId = InputUtility.getInt("Enter the NPC ID to modify: ");
+            System.out.println("Options for modification:");
+            System.out.println("1. Update Social Status");
+            System.out.println("2. Update Profession");
+            System.out.println("3. Update Both");
+            int modificationChoice = InputUtility.getInt("Enter your choice: ");
+            Integer newSocialStatusId = null;
+            Integer newProfessionId = null;
+
+            if (modificationChoice == 1 || modificationChoice == 3) {
+                System.out.println("Available Social Status IDs:");
+                npcModificationService.getAllSocialStatuses().forEach(status ->
+                        System.out.println(status.getId() + ": " + status.getStatusName()));
+                newSocialStatusId = InputUtility.getInt("Enter new Social Status ID: ");
+            }
+
+            if (modificationChoice == 2 || modificationChoice == 3) {
+                System.out.println("Available Profession IDs:");
+                npcModificationService.getAllProfessions().forEach(profession ->
+                        System.out.println(profession.getId() + ": " + profession.getProfessionName()));
+                newProfessionId = InputUtility.getInt("Enter new Profession ID: ");
+            }
+
+            String result = npcModificationService.updateNpcAttributes(npcId, newSocialStatusId, newProfessionId);
+            System.out.println(result);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error during NPC modification: " + e.getMessage());
+        }
+    }
+
+
 
 }

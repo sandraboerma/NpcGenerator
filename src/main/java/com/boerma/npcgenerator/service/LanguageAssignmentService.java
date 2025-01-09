@@ -30,31 +30,26 @@ public class LanguageAssignmentService {
     public void assignLanguagesToNpc(Npc npc, Race race, SocialStatus socialStatus) {
         Set<Language> assignedLanguages = new HashSet<>();
 
-        // Add race-based language
         Language raceLanguage = raceLanguageRepository.findLanguageByRaceId(race.getId());
         assignedLanguages.add(raceLanguage);
 
-        // Determine total languages based on social status
         int totalLanguages = switch (socialStatus.getId()) {
-            case 1 -> 1; // Destitute
-            case 2,3 -> 2; // Poor, Comfortable
-            case 4,5,6 -> 3; // Well-to-Do, Wealthy, Nobility
+            case 1 -> 1;
+            case 2,3 -> 2;
+            case 4,5,6 -> 3;
             default -> throw new IllegalArgumentException("Unknown social status ID: " + socialStatus.getId());
         };
 
-        // Add "Common" if more than 1 language is allowed
         if (totalLanguages > 1) {
             Language commonLanguage = languageRepository.findByLanguageName("Common")
                     .orElseThrow(() -> new IllegalArgumentException("Language not found: Common"));
             assignedLanguages.add(commonLanguage);
         }
 
-        // Add additional random languages if needed
         if (totalLanguages > 2) {
             List<Language> allLanguages = languageRepository.findAll();
-            allLanguages.removeAll(assignedLanguages); // Avoid duplicates
+            allLanguages.removeAll(assignedLanguages);
 
-            // Validate the list of remaining languages
             ValidationUtility.validateNotEmpty("allLanguages", allLanguages);
 
             Random random = new Random();
@@ -63,7 +58,6 @@ public class LanguageAssignmentService {
             }
         }
 
-        // Assign languages to the NPC
         npc.getLanguages().addAll(assignedLanguages);
     }
 }

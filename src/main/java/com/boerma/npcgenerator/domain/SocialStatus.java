@@ -27,16 +27,20 @@ public class SocialStatus {
         this.statusName = statusName;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public String getStatusName() {
+        return statusName;
+    }
+
     @Override
     public String toString() {
         return "SocialStatus{" +
                 "id=" + id +
                 ", socialStatus='" + statusName + '\'' +
                 '}';
-    }
-
-    public Integer getId() {
-        return id;
     }
 
 }

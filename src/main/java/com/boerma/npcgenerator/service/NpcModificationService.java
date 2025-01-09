@@ -40,7 +40,7 @@ public class NpcModificationService {
     }
 
     public List<Profession> getFilteredProfessions(int socialStatusId) {
-        throw new UnsupportedOperationException("Method not implemented yet.");
+        return professionRepository.findBySocialStatusId(socialStatusId);
     }
 
     public List<SocialStatus> getAllSocialStatuses() {
@@ -55,24 +55,44 @@ public class NpcModificationService {
         Npc npc = npcRepository.findById(npcId).orElseThrow(() ->
                 new IllegalArgumentException("NPC with ID " + npcId + " does not exist. Please enter a valid ID."));
 
+        // Store the old values for comparison
+        int oldSocialStatusId = npc.getSocialStatusId();
+        int oldProfessionId = npc.getProfessionId();
+
+        // Update Social Status
         if (newSocialStatusId != null) {
             SocialStatus socialStatus = socialStatusRepository.findById(newSocialStatusId).orElseThrow(() ->
-                    new IllegalArgumentException("Social Status with ID " + newSocialStatusId + " does not exist. Available options are ..."));
+                    new IllegalArgumentException("Social Status with ID " + newSocialStatusId + " does not exist."));
             npc.setSocialStatusId(newSocialStatusId);
         }
 
+        // Update Profession
         if (newProfessionId != null) {
             Profession profession = professionRepository.findById(newProfessionId).orElseThrow(() ->
-                    new IllegalArgumentException("Profession with ID " + newProfessionId + " does not exist. Please choose from ..."));
+                    new IllegalArgumentException("Profession with ID " + newProfessionId + " does not exist."));
 
-            if (!profession.getSocialStatusId().equals(newSocialStatusId)) {
+            if (profession.getSocialStatusId() != npc.getSocialStatusId()) {
                 throw new IllegalArgumentException("Profession does not align with the provided Social Status. Ensure the profession is valid for the selected social status.");
             }
             npc.setProfessionId(newProfessionId);
         }
 
+        // Save the updated NPC
         npcRepository.save(npc);
-        return "NPC updated successfully!";
+
+        // Fetch the new values for display
+        SocialStatus oldSocialStatus = socialStatusRepository.findById(oldSocialStatusId).orElse(null);
+        SocialStatus newSocialStatus = socialStatusRepository.findById(npc.getSocialStatusId()).orElse(null);
+        Profession oldProfession = professionRepository.findById(oldProfessionId).orElse(null);
+        Profession newProfession = professionRepository.findById(npc.getProfessionId()).orElse(null);
+
+        return String.format("NPC updated successfully!\nBefore: Social Status - %s, Profession - %s\nAfter: Social Status - %s, Profession - %s",
+                oldSocialStatus != null ? oldSocialStatus.getStatusName() : "N/A",
+                oldProfession != null ? oldProfession.getProfessionName() : "N/A",
+                newSocialStatus != null ? newSocialStatus.getStatusName() : "N/A",
+                newProfession != null ? newProfession.getProfessionName() : "N/A");
     }
+
+
 }
 

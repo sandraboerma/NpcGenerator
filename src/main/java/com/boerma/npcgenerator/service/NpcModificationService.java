@@ -8,6 +8,7 @@ import com.boerma.npcgenerator.repository.ProfessionRepository;
 import com.boerma.npcgenerator.repository.SocialStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,9 @@ public class NpcModificationService {
 
     @Autowired
     private ProfessionRepository professionRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     public Npc getNpcById(int npcId) {
         return npcRepository.findById(npcId).orElse(null);
@@ -74,5 +78,28 @@ public class NpcModificationService {
         npcRepository.save(npc);
         return "NPC updated successfully!";
     }
+
+    public void updateSocialStatus(int npcId, int newSocialStatusId) {
+        String sqlCheck = "SELECT COUNT(*) FROM social_statuses WHERE id = ?";
+        Integer count = jdbcTemplate.queryForObject(sqlCheck, Integer.class, newSocialStatusId);
+        if (count == null || count == 0) {
+            throw new IllegalArgumentException("Social Status with ID " + newSocialStatusId + " does not exist.");
+        }
+
+        String updateSql = "UPDATE npcs SET social_status_id = ? WHERE id = ?";
+        jdbcTemplate.update(updateSql, newSocialStatusId, npcId);
+    }
+
+    public void updateProfession(int npcId, int newProfessionId, int currentSocialStatusId) {
+        String sqlCheck = "SELECT COUNT(*) FROM professions WHERE id = ? AND social_status_id = ?";
+        Integer count = jdbcTemplate.queryForObject(sqlCheck, Integer.class, newProfessionId, currentSocialStatusId);
+        if (count == null || count == 0) {
+            throw new IllegalArgumentException("Profession with ID " + newProfessionId + " is not valid for the current Social Status.");
+        }
+
+        String updateSql = "UPDATE npcs SET profession_id = ? WHERE id = ?";
+        jdbcTemplate.update(updateSql, newProfessionId, npcId);
+    }
+
 }
 

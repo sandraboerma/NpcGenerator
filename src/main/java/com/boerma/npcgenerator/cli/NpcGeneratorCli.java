@@ -37,14 +37,16 @@ public class NpcGeneratorCli {
                 System.out.println("1. Generate NPCs");
                 System.out.println("2. View All NPCs");
                 System.out.println("3. Modify NPC Attributes");
-                System.out.println("4. Exit");
+                System.out.println("4. Delete NPC");
+                System.out.println("5. Exit");
                 int choice = InputUtility.getInt("Enter your choice: ");
 
                 switch (choice) {
                     case 1 -> handleGenerateNpcs();
                     case 2 -> handleViewAllNpcs();
                     case 3 -> handleModifyNpcAttributes();
-                    case 4 -> {
+                    case 4 -> handleDeleteNpc();
+                    case 5 ->{
                         System.out.println("Exiting... Goodbye!");
                         return;
                     }
@@ -120,14 +122,12 @@ public class NpcGeneratorCli {
             if (modificationChoice == 2 || modificationChoice == 3) {
                 System.out.println("Available Profession IDs:");
 
-                // Fetch valid professions using a unified method
                 List<Profession> validProfessions = npcModificationService.getFilteredProfessions(npc.getSocialStatusId());
                 if (validProfessions.isEmpty()) {
                     System.out.println("No valid professions available for the selected Social Status.");
                     return;
                 }
 
-                // Display valid professions
                 validProfessions.forEach(profession ->
                         System.out.println(profession.getId() + ": " + profession.getProfessionName()));
 
@@ -135,10 +135,8 @@ public class NpcGeneratorCli {
                         .map(Profession::getId)
                         .toList();
 
-                // Prompt user for new Profession ID
                 newProfessionId = InputUtility.getInt("Enter new Profession ID: ");
 
-                // Validate user input
                 if (!validProfessionIds.contains(newProfessionId)) {
                     System.out.println("Invalid input: The selected Profession ID is not valid for the current Social Status.");
                     return;
@@ -154,9 +152,25 @@ public class NpcGeneratorCli {
         }
     }
 
+    private void handleDeleteNpc() {
+        try {
+            System.out.println("Here are the available NPCs:");
+            List<NpcDisplayDto> allNpcs = npcCreationService.viewAllNpcs();
+            if (allNpcs.isEmpty()) {
+                System.out.println("No NPCs available for deletion.");
+                return;
+            }
+            NpcDisplayUtility.displayNpcTable(allNpcs);
 
-
-
+            int npcId = InputUtility.getInt("Enter the NPC ID to delete: ");
+            String result = npcModificationService.deleteNpcById(npcId);
+            System.out.println(result);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error during deletion: " + e.getMessage());
+        }
+    }
 
 
 }

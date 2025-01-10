@@ -55,18 +55,15 @@ public class NpcModificationService {
         Npc npc = npcRepository.findById(npcId).orElseThrow(() ->
                 new IllegalArgumentException("NPC with ID " + npcId + " does not exist. Please enter a valid ID."));
 
-        // Store the old values for comparison
         int oldSocialStatusId = npc.getSocialStatusId();
         int oldProfessionId = npc.getProfessionId();
 
-        // Update Social Status
         if (newSocialStatusId != null) {
             SocialStatus socialStatus = socialStatusRepository.findById(newSocialStatusId).orElseThrow(() ->
                     new IllegalArgumentException("Social Status with ID " + newSocialStatusId + " does not exist."));
             npc.setSocialStatusId(newSocialStatusId);
         }
 
-        // Update Profession
         if (newProfessionId != null) {
             Profession profession = professionRepository.findById(newProfessionId).orElseThrow(() ->
                     new IllegalArgumentException("Profession with ID " + newProfessionId + " does not exist."));
@@ -77,10 +74,8 @@ public class NpcModificationService {
             npc.setProfessionId(newProfessionId);
         }
 
-        // Save the updated NPC
         npcRepository.save(npc);
 
-        // Fetch the new values for display
         SocialStatus oldSocialStatus = socialStatusRepository.findById(oldSocialStatusId).orElse(null);
         SocialStatus newSocialStatus = socialStatusRepository.findById(npc.getSocialStatusId()).orElse(null);
         Profession oldProfession = professionRepository.findById(oldProfessionId).orElse(null);
@@ -92,6 +87,15 @@ public class NpcModificationService {
                 newSocialStatus != null ? newSocialStatus.getStatusName() : "N/A",
                 newProfession != null ? newProfession.getProfessionName() : "N/A");
     }
+
+    public String deleteNpcById(int npcId) {
+        if (!npcRepository.existsById(npcId)) {
+            throw new IllegalArgumentException("NPC with ID " + npcId + " does not exist.");
+        }
+        npcRepository.deleteById(npcId);
+        return "NPC with ID " + npcId + " has been successfully deleted.";
+    }
+
 
 
 }

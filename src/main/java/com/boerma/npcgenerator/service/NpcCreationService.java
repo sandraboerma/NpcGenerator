@@ -93,7 +93,6 @@ public class NpcCreationService {
             String gender = (String) row[7];
             String concatenatedLanguages = (String) row[8];
 
-            // Split and populate languages or set an empty list if null
             List<String> languages = (concatenatedLanguages != null && !concatenatedLanguages.isBlank())
                     ? List.of(concatenatedLanguages.split(",\\s*"))
                     : List.of();

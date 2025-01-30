@@ -33,9 +33,7 @@ public interface NpcRepository extends JpaRepository<Npc, Integer> {
             "JOIN genders g ON n.gender_id = g.id " +
             "LEFT JOIN npc_languages nl ON n.id = nl.npc_id " +
             "LEFT JOIN languages l ON nl.language_id = l.id " +
-            "WHERE n.id IN :ids " +
-            "GROUP BY n.id",
-            nativeQuery = true)
+            "WHERE n.id IN :ids " + "GROUP BY n.id", nativeQuery = true)
     List<Object[]> findAllNpcDetails(List<Integer> ids);
 
 }
